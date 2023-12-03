@@ -99,12 +99,18 @@ data:
     # IIS Webserver Enable-WindowsOptionalFeature –online –featurename
     Enable-WindowsOptionalFeature -Online -FeatureName IIS-WebServerRole, IIS-WebServer, IIS-CommonHttpFeatures, IIS-ManagementConsole, IIS-HttpErrors, IIS-HttpRedirect, IIS-WindowsAuthentication, IIS-StaticContent, IIS-DefaultDocument, IIS-HttpCompressionStatic, IIS-DirectoryBrowsing
 
-    # VS Code
-    $vscodeurl = "https://code.visualstudio.com/sha/download?build=stable&os=win32-x64-user"
-    $setupPath = "$env:TEMP\VSCodeUserSetup-x64.exe"
-    Invoke-RestMethod -Uri $vscodeurl -OutFile $setupPath
+
+    # Download VS Code
+    $url = "https://code.visualstudio.com/sha/download?build=stable&os=win32-x64-user"
+    $setupPath = "C:\VSCodeUserSetup-x64.exe"
+    Invoke-WebRequest -Uri $url -OutFile $setupPath
     # vs code
     Start-Process $setupPath -Wait -ArgumentList "/ACTION=INSTALL /VERYSILENT /MERGETASKS=!runcode"
-    Remove-Item $setupPath
+    # Rename cached unattend.xml to avoid it is picked up by sysprep
+    mv C:\Windows\Panther\unattend.xml C:\Windows\Panther\unattend.visualStudio.xml
+
+    # Eject CD, to avoid that the unattend.xml on the CD is picked up by sysprep
+    (New-Object -COMObject Shell.Application).NameSpace(17).ParseName("D:").InvokeVerb("Eject")
+
   id_rsa.pub: >-
     ecdsa-sha2-nistp521 AAAAE2VjZHNhLXNoYTItbmlzdHA1MjEAAAAIbmlzdHA1MjEAAACFBAF6jnfwwvUVlQbaTX83dOQ/B6RNy24e1hZDyW+pl9SkiXeGCCZf88+9Nm2YGC/RctKDBaR5bAeFiC0592nZmCt1tgH6nKfrXjVB5tFnV2rrs22aRv3CEhAN507RK9NuPkJ4AACB3oWygTEkK65wQI4uyEdxf64zCKuONOU9+gPPlLbNug==

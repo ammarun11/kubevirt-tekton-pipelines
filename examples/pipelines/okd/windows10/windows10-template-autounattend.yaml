@@ -1,12 +1,11 @@
-kind: ConfigMap
 apiVersion: v1
+kind: ConfigMap
 metadata:
   name: windows10-template-autounattend
 data:
-  autounattend.xml: >
+  autounattend.xml: |
     <?xml version="1.0" encoding="utf-8"?>
-    <unattend xmlns="urn:schemas-microsoft-com:unattend"
-    xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State">
+    <unattend xmlns="urn:schemas-microsoft-com:unattend" xmlns:wcm="http://schemas.microsoft.com/WMIConfig/2002/State">
       <settings pass="windowsPE">
         <component name="Microsoft-Windows-International-Core-WinPE" processorArchitecture="amd64" publicKeyToken="31bf3856ad364e35" language="neutral" versionScope="nonSxS">
           <SetupUILanguage>
@@ -103,34 +102,19 @@ data:
         </component>
       </settings>
     </unattend>
-  post-install.ps1: >
+  post-install.ps1: |
     # Install virtio guest drivers
-
     # ADDLOCAL is specified to workaround a bug in virtio-win-0.1.217.iso
-
     # See:
-
-    #   -
-    https://github.com/virtio-win/virtio-win-guest-tools-installer/issues/33
-
+    #   - https://github.com/virtio-win/virtio-win-guest-tools-installer/issues/33
     #   - https://github.com/virtio-win/virtio-win-pkg-scripts/issues/60
-
-    Start-Process msiexec -Wait -ArgumentList "/i E:\virtio-win-gt-x64.msi /qn
-    /passive /norestart
-    ADDLOCAL=FE_balloon_driver,FE_network_driver,FE_vioinput_driver,FE_viorng_driver,FE_vioscsi_driver,FE_vioserial_driver,FE_viostor_driver,FE_viofs_driver,FE_viogpudo_driver"
-
+    Start-Process msiexec -Wait -ArgumentList "/i E:\virtio-win-gt-x64.msi /qn /passive /norestart ADDLOCAL=FE_balloon_driver,FE_network_driver,FE_vioinput_driver,FE_viorng_driver,FE_vioscsi_driver,FE_vioserial_driver,FE_viostor_driver,FE_viofs_driver,FE_viogpudo_driver"
 
     # Install qemu guest agent
-
-    Start-Process msiexec -Wait -ArgumentList "/i
-    E:\guest-agent\qemu-ga-x86_64.msi /qn /passive /norestart"
-
+    Start-Process msiexec -Wait -ArgumentList "/i E:\guest-agent\qemu-ga-x86_64.msi /qn /passive /norestart"
 
     # Rename cached unattend.xml to avoid it is picked up by sysprep
-
     mv C:\Windows\Panther\unattend.xml C:\Windows\Panther\unattend.install.xml
 
     # Eject CD, to avoid that the unattend.xml on the CD is picked up by sysprep
-
-    (New-Object -COMObject
-    Shell.Application).NameSpace(17).ParseName("F:").InvokeVerb("Eject")
+    (New-Object -COMObject Shell.Application).NameSpace(17).ParseName("F:").InvokeVerb("Eject")

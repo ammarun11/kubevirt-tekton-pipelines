@@ -1,0 +1,20 @@
+cat <<EOF > nginx-vm-tester-pipelinerun.yaml
+apiVersion: tekton.dev/v1
+kind: PipelineRun
+metadata:
+  generateName: nginx-vm-tester-run-
+  labels:
+    tekton.dev/pipeline: nginx-vm-tester
+spec:
+  pipelineRef:
+    name: nginx-vm-tester
+  taskRunSpecs:
+    - ServiceAccountName: generate-ssh-keys-task
+      pipelineTaskName: generate-ssh-keys
+    - ServiceAccountName: create-vm-from-manifest-task
+      pipelineTaskName: create-vm-from-manifest
+    - ServiceAccountName: execute-in-vm-task
+      pipelineTaskName: execute-in-vm
+    # - ServiceAccountName: cleanup-vm-task
+    #   pipelineTaskName: cleanup-vm
+EOF

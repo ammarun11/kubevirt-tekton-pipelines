@@ -1,0 +1,13 @@
+---
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  generateName: virt-sysprep-updater-run-
+spec:
+  pipelineRef:
+    name: virt-sysprep-updater
+  taskRunSpecs:
+    - pipelineTaskName: modify-data-object
+      taskServiceAccountName: modify-data-object-task
+    - pipelineTaskName: create-vm-from-manifest
+      taskServiceAccountName: create-vm-from-manifest-task

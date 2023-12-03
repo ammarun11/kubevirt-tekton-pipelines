@@ -1,0 +1,16 @@
+apiVersion: tekton.dev/v1beta1
+kind: PipelineRun
+metadata:
+  generateName: windows10-customize-run-
+spec:
+  pipelineRef:
+    name: windows-customize
+  taskRunSpecs:
+    - pipelineTaskName: copy-vm-root-disk
+      taskserviceAccountName: modify-data-object-task
+    - pipelineTaskName: create-vm
+      taskserviceAccountName: create-vm-from-manifest-task
+    - pipelineTaskName: wait-for-vmi-status
+      taskserviceAccountName: wait-for-vmi-status-task
+    # - pipelineTaskName: cleanup-vm
+    #   taskserviceAccountName: cleanup-task

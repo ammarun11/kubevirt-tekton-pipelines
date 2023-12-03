@@ -140,7 +140,7 @@ spec:
                       cores: 2
                     resources:
                       requests:
-                        memory: 2Gi
+                        memory: 4Gi
                     features:
                       acpi: {}
                       apic: {}
